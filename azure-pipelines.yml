@@ -62,4 +62,4 @@ steps:
     command: push
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
     azureContainerRegistry: $(azureContainerRegistry)
-    imageName: vwtdatdevcrg.azurecr.io/zally_web-ui
+    imageName: vwtdatdevcrg.azurecr.io/zally_webui
