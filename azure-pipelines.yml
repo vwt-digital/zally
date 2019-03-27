@@ -38,7 +38,7 @@ steps:
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
     azureContainerRegistry: $(azureContainerRegistry)
     dockerFile: web-ui/Dockerfile
-    imageName: zally_web-ui_
+    imageName: zally_webui
 
 - task: Docker@1
   displayName: Container registry login
