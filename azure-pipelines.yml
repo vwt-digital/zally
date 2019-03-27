@@ -37,7 +37,7 @@ steps:
     command: build
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
     azureContainerRegistry: $(azureContainerRegistry)
-    dockerFile: server/Dockerfile
+    dockerFile: web-ui/Dockerfile
     imageName: zally_web-ui_
 
 - task: Docker@1
