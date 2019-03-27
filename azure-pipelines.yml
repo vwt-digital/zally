@@ -4,10 +4,10 @@
 # https://aka.ms/yaml
 
 variables:
+  - group: zally-build
   environment: 'd'
   azureSubscriptionEndpoint: vwt-dev Azure subscription
   azureContainerRegistry: vwtdatdevcrg.azurecr.io
-  - group: zally-build
 
 trigger:
 - master
