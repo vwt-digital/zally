@@ -18,7 +18,7 @@ steps:
     cd server
     ./gradlew build
     docker build .
-    displayName: Build docker images 
+  displayName: Build docker images 
 
   #- task: AzureResourceGroupDeployment@2
   #displayName: 'Azure Create Docker Registry'
