@@ -24,6 +24,13 @@ steps:
   displayName: Build zally server
 
 - task: Docker@1
+  displayName: Container registry login
+  inputs:
+    command: login
+    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+    azureContainerRegistry: $(azureContainerRegistry)
+
+- task: Docker@1
   displayName: Build $(Build.BuildIdServer) image
   inputs:
     command: build
@@ -31,6 +38,15 @@ steps:
     azureContainerRegistry: $(azureContainerRegistry)
     dockerFile: server/Dockerfile
     #imageName: zally_server
+    imageName: $(Build.BuildIdServer)
+
+- task: Docker@1
+  displayName: Push image ($(Build.Repository.Name)) ($(Build.BuildIdServer))
+  inputs:
+    command: push
+    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+    azureContainerRegistry: $(azureContainerRegistry)
+    #imageName: $(Build.Repository.Name)/$(Build.BuildIdServer)
     imageName: $(Build.BuildIdServer)
 
 - task: Docker@1
@@ -44,22 +60,7 @@ steps:
     imageName: $(Build.BuildIdGui)
 
 - task: Docker@1
-  displayName: Container registry login
-  inputs:
-    command: login
-    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-    azureContainerRegistry: $(azureContainerRegistry)
-
-- task: Docker@1
-  displayName: Push image ($(Build.Repository.Name))  ($(Build.BuildIdServer))
-  inputs:
-    command: push
-    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-    azureContainerRegistry: $(azureContainerRegistry)
-    imageName: $(Build.Repository.Name)/$(Build.BuildIdServer)
-
-- task: Docker@1
-  displayName: Push image ($(Build.BuildIdGui))
+  displayName: Push image ($(Build.Repository.Name)) ($(Build.BuildIdGui))
   inputs:
     command: push
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
