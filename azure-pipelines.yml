@@ -19,4 +19,12 @@ steps:
     ./gradlew build
     docker build -t zally_server .
     docker push zally_server
+    docker push vwtdatdevcrg.azurecr.io/zally_server
   displayName: Build docker images 
+
+  #- task: Docker@1
+  #displayName: Container registry login
+  #inputs:
+  #  command: login
+  #  containerregistrytype: Container Registry
+  #  dockerRegistryEndpoint: Contoso
