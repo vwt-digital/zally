@@ -18,19 +18,27 @@ steps:
           #- script: gradlew build ; docker build -t $(dockerId)/$(imageName)
 - script: |
     cd server
-    ./gradlew build
-    #docker build -t vwtdatdevcrg.azurecr.io/zally_server .
-    #    docker login -u vwtdatdevcrg vwtdatdevcrg.azurecr.io
-  displayName: Build docker images 
+    #./gradlew build
+    ./gradlew build -x test
+  displayName: Build sally server
 
 - task: Docker@1
-  displayName: Build image
+  displayName: Build server image
   inputs:
     command: build
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
     azureContainerRegistry: $(azureContainerRegistry)
     dockerFile: server/Dockerfile
     imageName: zally_server
+
+- task: Docker@1
+  displayName: Build web-ui image
+  inputs:
+    command: build
+    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+    azureContainerRegistry: $(azureContainerRegistry)
+    dockerFile: server/Dockerfile
+    imageName: zally_web-ui_
 
 - task: Docker@1
   displayName: Container registry login
@@ -48,6 +56,10 @@ steps:
     imageName: vwtdatdevcrg.azurecr.io/zally_server
     #imageName: $(Build.Repository.Name):$(Build.BuildId)
 
-    #- script: |
-    #docker push vwtdatdevcrg.azurecr.io/zally_server
-    #displayName: Build push images 
+- task: Docker@1
+  displayName: Push image
+  inputs:
+    command: push
+    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+    azureContainerRegistry: $(azureContainerRegistry)
+    imageName: vwtdatdevcrg.azurecr.io/zally_web-ui
