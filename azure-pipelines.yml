@@ -17,14 +17,6 @@ steps:
 - script: |
     cd server
     ./gradlew build
-    docker build .
+    docker build -t zally_server .
+    docker push zally_server
   displayName: Build docker images 
-
-  #- task: AzureResourceGroupDeployment@2
-  #displayName: 'Azure Create Docker Registry'
-  #inputs:
-  #  azureSubscription: 'vwt-dev Azure subscription'
-  #  resourceGroupName: vwt-$(environment)-we-dat-crg-rg
-  #  location: 'West Europe'
-  #  csmFile: 'template/create_docker_registry_template.json'
-  #  csmParametersFile: 'template/create_docker_registry_parameters.json'
