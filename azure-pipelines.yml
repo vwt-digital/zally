@@ -53,19 +53,17 @@ steps:
     azureContainerRegistry: $(azureContainerRegistry)
 
 - task: Docker@1
-  displayName: Push image
+  displayName: Push image ($(Build.BuildIdServer))
   inputs:
     command: push
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
     azureContainerRegistry: $(azureContainerRegistry)
-    #imageName: vwtdatdevcrg.azurecr.io/zally_server
     imageName: $(Build.Repository.Name):$(Build.BuildIdServer)
 
 - task: Docker@1
-  displayName: Push image
+  displayName: Push image ($(Build.BuildIdGui))
   inputs:
     command: push
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
     azureContainerRegistry: $(azureContainerRegistry)
-    #imageName: vwtdatdevcrg.azurecr.io/zally_webui
     imageName: $(Build.Repository.Name):$(Build.BuildIdGui)
