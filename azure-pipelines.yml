@@ -58,7 +58,7 @@ steps:
     command: push
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
     azureContainerRegistry: $(azureContainerRegistry)
-    imageName: $(Build.Repository.Name):$(Build.BuildIdServer)
+    imageName: $(Build.Repository.Name)/$(Build.BuildIdServer)
 
 - task: Docker@1
   displayName: Push image ($(Build.BuildIdGui))
@@ -66,4 +66,4 @@ steps:
     command: push
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
     azureContainerRegistry: $(azureContainerRegistry)
-    imageName: $(Build.Repository.Name):$(Build.BuildIdGui)
+    imageName: $(Build.Repository.Name)/$(Build.BuildIdGui)
