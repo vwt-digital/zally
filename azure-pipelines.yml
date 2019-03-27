@@ -29,7 +29,7 @@ steps:
     command: build
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
     azureContainerRegistry: $(azureContainerRegistry)
-    dockerFile: Dockerfile
+    dockerFile: server/Dockerfile
     imageName: zally_server
 
 - task: Docker@1
