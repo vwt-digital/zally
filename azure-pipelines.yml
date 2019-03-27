@@ -6,11 +6,6 @@
 variables:
   - group: zally-build
 
-    #variables:
-    #  environment: 'd'
-    #  azureSubscriptionEndpoint: vwt-dev Azure subscription
-    #  azureContainerRegistry: vwtdatdevcrg.azurecr.io
-
 trigger:
 - master
 
@@ -31,7 +26,7 @@ steps:
     azureContainerRegistry: $(azureContainerRegistry)
 
 - task: Docker@1
-  displayName: Build $(Build.BuildIdServer) image
+  displayName: Build image ($(Build.BuildIdServer))
   inputs:
     command: build
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
@@ -41,16 +36,15 @@ steps:
     imageName: $(Build.BuildIdServer)
 
 - task: Docker@1
-  displayName: Push image ($(Build.Repository.Name)) ($(Build.BuildIdServer))
+  displayName: Push image ($(Build.BuildIdServer))
   inputs:
     command: push
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
     azureContainerRegistry: $(azureContainerRegistry)
-    #imageName: $(Build.Repository.Name)/$(Build.BuildIdServer)
     imageName: $(Build.BuildIdServer)
 
 - task: Docker@1
-  displayName: Build $(Build.BuildIdGui) image
+  displayName: Build image ($(Build.BuildIdGui)) 
   inputs:
     command: build
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
@@ -60,9 +54,9 @@ steps:
     imageName: $(Build.BuildIdGui)
 
 - task: Docker@1
-  displayName: Push image ($(Build.Repository.Name)) ($(Build.BuildIdGui))
+  displayName: Push image ($(Build.BuildIdGui))
   inputs:
     command: push
     azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
     azureContainerRegistry: $(azureContainerRegistry)
-    imageName: $(Build.Repository.Name)/$(Build.BuildIdGui)
+    imageName: $(Build.BuildIdGui)
