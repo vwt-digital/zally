@@ -18,6 +18,7 @@ steps:
     cd server
     ./gradlew build
     docker build -t vwtdatdevcrg.azurecr.io/zally_server .
+    docker login vwtdatdevcrg.azurecr.io
     docker push vwtdatdevcrg.azurecr.io/zally_server
   displayName: Build docker images 
 
