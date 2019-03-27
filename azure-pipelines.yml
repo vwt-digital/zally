@@ -5,6 +5,8 @@
 
 variables:
   environment: 'd'
+  azureSubscriptionEndpoint: vwtdatdevcrg
+  azureContainerRegistry: vwtdatdevcrg.azurecr.io
 
 trigger:
 - master
@@ -18,13 +20,17 @@ steps:
     cd server
     ./gradlew build
     docker build -t vwtdatdevcrg.azurecr.io/zally_server .
-    docker login -u vwtdatdevcrg vwtdatdevcrg.azurecr.io
-    docker push vwtdatdevcrg.azurecr.io/zally_server
+    #    docker login -u vwtdatdevcrg vwtdatdevcrg.azurecr.io
   displayName: Build docker images 
 
-  #- task: Docker@1
-  #displayName: Container registry login
-  #inputs:
-  #  command: login
-  #  containerregistrytype: Container Registry
-  #  dockerRegistryEndpoint: Contoso
+
+- task: Docker@1
+  displayName: Container registry login
+  inputs:
+    command: login
+    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+    azureContainerRegistry: $(azureContainerRegistry)
+
+- script: |
+    docker push vwtdatdevcrg.azurecr.io/zally_server
+  displayName: Build push images 
