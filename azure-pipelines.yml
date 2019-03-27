@@ -5,7 +5,7 @@
 
 variables:
   environment: 'd'
-  azureSubscriptionEndpoint: vwtdatdevcrg
+  azureSubscriptionEndpoint: vwt-dev Azure subscription
   azureContainerRegistry: vwtdatdevcrg.azurecr.io
 
 trigger:
