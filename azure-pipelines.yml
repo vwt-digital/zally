@@ -12,12 +12,13 @@ trigger:
 pool:
   vmImage: 'Ubuntu-16.04'
 
-step:
+steps:
           #- script: gradlew build ; docker build -t $(dockerId)/$(imageName)
   displayName: Build docker images 
-- script: cd server
-  script: ./gradlew build
-  script: docker build .
+- script: |
+    cd server
+    ./gradlew build
+    docker build .
 
   #- task: AzureResourceGroupDeployment@2
   #displayName: 'Azure Create Docker Registry'
