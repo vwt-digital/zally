@@ -5,6 +5,8 @@
 
 variables:
   - group: zally-build
+
+variables:
   environment: 'd'
   azureSubscriptionEndpoint: vwt-dev Azure subscription
   azureContainerRegistry: vwtdatdevcrg.azurecr.io
