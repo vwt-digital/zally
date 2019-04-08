@@ -4,13 +4,14 @@ COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle build
 
-RUN cp /home/gradle/src/build/libs/zally.jar .
+# RUN cp /home/gradle/src/build/libs/zally.jar .
 
-FROM registry.opensource.zalan.do/stups/openjdk:latest
+FROM registry.opensource.zalan.do/stups/openjdk:latest as run
 
-MAINTAINER "http://zalando.github.io/"
+# MAINTAINER "http://zalando.github.io/"
 
 COPY src/main/resources/api/zally-api.yaml /zalando-apis/zally-api.yaml
+COPY --from=builder /home/gradle/src/build/libs/zally.jar /
 
 EXPOSE 8080
 
