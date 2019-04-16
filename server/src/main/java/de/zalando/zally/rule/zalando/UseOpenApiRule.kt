@@ -13,12 +13,13 @@ import de.zalando.zally.rule.api.Context
 import de.zalando.zally.rule.api.Rule
 import de.zalando.zally.rule.api.Severity
 import de.zalando.zally.rule.api.Violation
+import de.zalando.zally.util.ast.JsonPointers
 import org.slf4j.LoggerFactory
 import java.net.URL
 
 @Rule(
     ruleSet = ZalandoRuleSet::class,
-    id = UseOpenApiRule.id,
+    id = "101",
     severity = Severity.MUST,
     title = "Provide API Specification using OpenAPI"
 )
@@ -62,7 +63,7 @@ class UseOpenApiRule(rulesConfig: Config) {
         // -> JSON must start with '{' and end with '}'
         val cleanedUpSource = context.source.trim()
         return if (cleanedUpSource.startsWith("{") && cleanedUpSource.endsWith("}")) {
-            context.violation("must use YAML format")
+            context.violation("must use YAML format", JsonPointers.EMPTY)
         } else {
             null
         }
@@ -100,9 +101,5 @@ class UseOpenApiRule(rulesConfig: Config) {
             val schema = ObjectTreeReader().read(schemaUrl)
             JsonSchemaValidator(name.version, schema, schemaRedirects = mapOf(referencedOnlineSchema to localResource))
         }.associateBy { OpenApiVersion.valueOf(it.name.toUpperCase()) }
-    }
-
-    companion object {
-        const val id: String = "101"
     }
 }

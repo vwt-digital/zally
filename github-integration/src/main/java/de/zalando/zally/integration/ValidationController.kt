@@ -15,22 +15,17 @@ import javax.servlet.http.HttpServletRequest
 
 @RestController
 class ValidationController(private val validationService: ValidationService) {
-    private val PULL_REQUEST_EVENT_NAME = "pull_request"
 
     private val log = KotlinLogging.logger {}
 
-    @PostMapping("/github-webhook")
+    @PostMapping("/github-webhook", headers = arrayOf("X-GitHub-Event=pull_request"))
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun validatePullRequest(@RequestBody payload: String,
-                            @RequestHeader(value = "X-GitHub-Event") eventType: String,
-                            @RequestHeader(value = "X-Hub-Signature") signature: String) {
+    fun validatePullRequest(
+        @RequestBody payload: String,
+        @RequestHeader(value = "X-Hub-Signature") signature: String
+    ) {
 
-        if (eventType != PULL_REQUEST_EVENT_NAME) {
-            log.info("Received unsupported event: {}", eventType)
-            return
-        }
-
-        log.info("Received webhook: {}", eventType)
+        log.info("Received pull request event on webhook")
 
         validationService.validatePullRequest(payload, signature)
 
@@ -43,5 +38,4 @@ class ValidationController(private val validationService: ValidationService) {
         log.error("request failed", ex)
         return ResponseEntity<Any>(HttpStatus.INTERNAL_SERVER_ERROR)
     }
-
 }

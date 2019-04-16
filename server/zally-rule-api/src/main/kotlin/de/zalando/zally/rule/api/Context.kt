@@ -36,8 +36,8 @@ interface Context {
      * @return a list of Violations and/or nulls where no violations are necessary
      */
     fun validatePaths(
-            pathFilter: (Map.Entry<String, PathItem?>) -> Boolean = { true },
-            action: (Map.Entry<String, PathItem?>) -> List<Violation?>
+        pathFilter: (Map.Entry<String, PathItem?>) -> Boolean = { true },
+        action: (Map.Entry<String, PathItem?>) -> List<Violation?>
     ): List<Violation>
 
     /**
@@ -100,7 +100,7 @@ interface Context {
      * @param pointer an existing pointer or null
      * @return the new Violation
      */
-    fun violation(description: String, pointer: JsonPointer? = null): Violation
+    fun violation(description: String, pointer: JsonPointer?): Violation
 
     /**
      * Check whether a location should be ignored by a specific rule.
