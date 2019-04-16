@@ -26,6 +26,10 @@ twintip:
   mapping: /api
   yaml: "classpath:/api/zally-api.yaml"
 
+server:
+  port: ${PORT}
+
+
 rules-config-path: "rules-config.conf"
 
 zally:
