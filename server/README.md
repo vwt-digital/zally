@@ -31,13 +31,24 @@ cd zally/server
 
 The bootRun task is configured to run with 'dev' profile by default.
 
-## Build with Docker (for Google Cloud Run)
+# Build with Docker (for Google Cloud Run)
 
+## Build
+
+```bash
 docker build . --tag gcr.io/[PROJECT_ID]/zallylinter
-docker push gcr.io/[PROJECT_ID]/zallylinter
+```
 
-# local testing of image
+## Push
+
+```bash
+docker push gcr.io/[PROJECT_ID]/zallylinter
+```
+
+## local testing of image
+```bash
 PORT=8080 && docker run -p 8080:${PORT} -e PORT=${PORT} -e MANAGEMENT_PORT=7979 gcr.io/[PROJECT_ID]/zallylinter
+```
 
 
 
