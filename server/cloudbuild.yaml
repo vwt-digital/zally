@@ -1,8 +1,0 @@
-steps:
-  # Build the zallylinter image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'eu.gcr.io/${PROJECT_ID}/zallylinter', '.']
-    dir: 'server'
-
-## Push the zallylinter image
-images: ['eu.gcr.io/${PROJECT_ID}//zallylinter']

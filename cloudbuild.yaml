@@ -1,0 +1,18 @@
+steps:
+  # Copy cli
+  - name: 'ubuntu'
+    args: ['cp', '-r', 'cli/zally', 'server/cli']
+
+  # Build cli
+  - name: 'mirror.gcr.io/library/golang'
+    args: ['go', 'build']
+    dir: 'server/cli'
+
+  # Build the zallylinter image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/zallylinter', '.']
+    dir: 'server'
+    
+  # Push the image.
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'eu.gcr.io/$PROJECT_ID/zallylinter']
