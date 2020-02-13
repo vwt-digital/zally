@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk-slim as builder
 COPY . /src
 WORKDIR /src
-RUN ./gradlew clean build
+RUN ./gradlew clean build -x test
 
 FROM openjdk:8-jdk-slim as run
 
