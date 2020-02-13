@@ -1,13 +1,12 @@
-FROM gradle:jdk8 as builder
+FROM openjdk:8-jdk-slim as builder
+COPY . /src
+WORKDIR /src
+RUN ./gradlew clean build
 
-COPY --chown=gradle:gradle . /home/gradle/src
-WORKDIR /home/gradle/src
-RUN ./gradlew clean build -x test --stacktrace --scan --debug
-
-FROM registry.opensource.zalan.do/stups/openjdk:latest as run
+FROM openjdk:8-jdk-slim as run
 
 COPY src/main/resources/api/zally-api.yaml /usr/local/bin/zalando-apis/zally-api.yaml
-COPY --from=builder /home/gradle/src/build/libs/zally.jar /usr/local/bin/zallyserver.jar
+COPY --from=builder /src/build/libs/zally.jar /usr/local/bin/zallyserver.jar
 
 CMD chmod +x cli/zally
 COPY cli/zally /usr/local/bin
