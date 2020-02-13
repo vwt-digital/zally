@@ -1,7 +1,7 @@
 package de.zalando.zally.dto
 
-import com.fasterxml.jackson.core.JsonPointer
-import de.zalando.zally.rule.Result
+import de.zalando.zally.core.toJsonPointer
+import de.zalando.zally.core.Result
 import de.zalando.zally.rule.api.Severity
 import de.zalando.zally.rule.api.Severity.HINT
 import de.zalando.zally.rule.api.Severity.MAY
@@ -102,7 +102,7 @@ class ViolationsCounterTest {
                 title = "Test Rule Title",
                 description = "Description of test rule",
                 violationType = severity,
-                pointer = JsonPointer.compile("/pointer")
+                pointer = "/pointer".toJsonPointer()
             )
         }
     }

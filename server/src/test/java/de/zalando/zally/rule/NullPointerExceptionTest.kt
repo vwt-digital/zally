@@ -4,7 +4,14 @@ import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import de.zalando.zally.util.ast.JsonPointers
+import de.zalando.zally.apireview.RestApiTestConfiguration.Companion.assertRuleManagerUsingAllAnnotatedRules
+import de.zalando.zally.core.CompositeRulesValidator
+import de.zalando.zally.core.EMPTY_JSON_POINTER
+import de.zalando.zally.core.ObjectTreeReader
+import de.zalando.zally.core.RulesManager
+import de.zalando.zally.core.RulesPolicy
+import de.zalando.zally.core.plus
+import de.zalando.zally.core.toEscapedJsonPointer
 import io.swagger.util.Yaml
 import org.intellij.lang.annotations.Language
 import org.junit.ClassRule
@@ -20,7 +27,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule
 
 @RunWith(Parameterized::class)
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles("test", "all-annotated-rules")
 class NullPointerExceptionTest(
     private val name: String,
     private val spec: String
@@ -381,7 +388,7 @@ class NullPointerExceptionTest(
                     val parent = root.at(head)
                     when (parent) {
                         is ObjectNode -> {
-                            parent.set(last.matchingProperty, null)
+                            parent.set<ObjectNode>(last.matchingProperty, null)
                             val param1 = arrayOf("$name with null $pointer", root.pretty())
 
                             parent.remove(last.matchingProperty)
@@ -405,19 +412,19 @@ class NullPointerExceptionTest(
         }
 
         private fun JsonNode?.allJsonPointers(): List<JsonPointer> =
-            listOf(JsonPointers.EMPTY) +
+            listOf(EMPTY_JSON_POINTER) +
             when (this) {
                 is ObjectNode -> {
                     fields().asSequence().toList().flatMap { (name, node) ->
                         node.allJsonPointers().map {
-                            JsonPointers.escape(name).append(it)
+                            EMPTY_JSON_POINTER + name.toEscapedJsonPointer() + it
                         }
                     }
                 }
                 is ArrayNode -> {
                     (0 until size()).flatMap { index ->
                         get(index).allJsonPointers().map {
-                            JsonPointers.escape(index.toString()).append(it)
+                            EMPTY_JSON_POINTER + index.toString().toEscapedJsonPointer() + it
                         }
                     }
                 }
@@ -432,8 +439,13 @@ class NullPointerExceptionTest(
     @Autowired
     private lateinit var validator: CompositeRulesValidator
 
+    @Autowired
+    private lateinit var rules: RulesManager
+
     @Test
     fun `validate with spec does not throw NullPointerException`() {
-        validator.validate(spec, RulesPolicy(emptyArray()))
+        assertRuleManagerUsingAllAnnotatedRules(rules)
+
+        validator.validate(spec, RulesPolicy(emptyList()))
     }
 }

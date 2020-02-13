@@ -6,7 +6,7 @@ set -ex
 env
 
 readonly DOCKER_HOST="pierone.stups.zalan.do"
-readonly DOCKER_TEAM="architecture"
+readonly DOCKER_TEAM="pitchfork"
 readonly IS_PR_BUILD=${CDP_PULL_REQUEST_NUMBER+true}
 readonly IS_CDP_BUILD=${CDP_TARGET_BRANCH+true}
 readonly REPO_ROOT=$PWD
@@ -34,6 +34,11 @@ do
     web_ui_changed=true
   fi
   if [[ $f == github-integration/* ]]; then
+    ghe_integration_changed=true
+  fi
+  if [[ $f == .delivery/build-and-push.sh ]]; then
+    server_changed=true
+    web_ui_changed=true
     ghe_integration_changed=true
   fi
 done

@@ -1,7 +1,7 @@
 package de.zalando.zally.apireview
 
 import de.zalando.zally.dto.ApiDefinitionRequest
-import de.zalando.zally.rule.Result
+import de.zalando.zally.core.Result
 import de.zalando.zally.rule.api.Severity
 import org.hibernate.annotations.Parameter
 import org.hibernate.annotations.Type
@@ -25,7 +25,7 @@ import javax.persistence.OneToMany
 class ApiReview(
     request: ApiDefinitionRequest,
     val userAgent: String = "",
-    @Suppress("CanBeParameter") private val apiDefinition: String,
+    @Suppress("CanBeParameter") val apiDefinition: String,
     violations: List<Result> = emptyList(),
     val name: String? = OpenApiHelper.extractApiName(apiDefinition),
     val apiId: String? = OpenApiHelper.extractApiId(apiDefinition),

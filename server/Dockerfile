@@ -1,8 +1,8 @@
-FROM gradle:jdk10 as builder
+FROM gradle:jdk8 as builder
 
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
-RUN ./gradlew clean build -x test
+RUN ./gradlew clean build -x test --stacktrace --scan --debug
 
 FROM registry.opensource.zalan.do/stups/openjdk:latest as run
 
@@ -13,7 +13,6 @@ CMD chmod +x cli/zally
 COPY cli/zally /usr/local/bin
 
 COPY zally-lint.sh /
-
 EXPOSE 8080
 EXPOSE 8000
 
