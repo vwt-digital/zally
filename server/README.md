@@ -36,19 +36,40 @@ The bootRun task is configured to run with 'dev' profile by default.
 ## Build
 
 ```bash
-docker build . --tag gcr.io/[PROJECT_ID]/zallylinter
+docker build . --tag eu.gcr.io/[PROJECT_ID]/cloudbuilder-zally
 ```
 
 ## Push
 
 ```bash
-docker push gcr.io/[PROJECT_ID]/zallylinter
+docker push eu.gcr.io/[PROJECT_ID]/cloudbuilder-zally
 ```
 
 ## local testing of image
 ```bash
-PORT=8080 && docker run -p 8080:${PORT} -e PORT=${PORT} -e MANAGEMENT_PORT=7979 gcr.io/[PROJECT_ID]/zallylinter
+PORT=8080 && docker run -p 8080:${PORT} -e PORT=${PORT} -e MANAGEMENT_PORT=7979 gcr.io/[PROJECT_ID]/cloudbuilder-zally
 ```
+
+# Usage
+
+#### Argument
+Only one argument is necessary to run: the api spec file. 
+
+#### Deployment
+Run the container before the deploy and after preparing the directory.
+```bash
+# Test Api spec using Zally
+- name: 'eu.gcr.io/[PROJECT_ID]/cloudbuilder-zally'
+  args: ['file.yamlorjson']
+  dir: 'dir/to/file.yamlorjson'
+```
+
+#### Local
+Run locally:
+```bash
+docker run -it -v $(pwd)/dir/to/file.yamlorjson:/openapi.yamlorjson eu.gcr.io/[PROJECT_ID]/cloudbuilder-zally openapi.yamlorjson
+```
+
 
 
 
