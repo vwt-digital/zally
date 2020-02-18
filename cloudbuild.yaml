@@ -6,8 +6,7 @@ steps:
     args:
       - '-c'
       - |
-        cp -r zally/ ../server/cli
-    dir: 'cli'
+        cp -r cli/zally server/cli
 
   # Build cli
   - name: 'gcr.io/gcp-runtimes/go1-builder'
