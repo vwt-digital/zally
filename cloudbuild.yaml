@@ -9,7 +9,7 @@ steps:
         cp -r cli/zally server/cli
 
   # Build cli
-  - name: 'gcr.io/gcp-runtimes/go1-builder'
+  - name: 'mirror.gcr.io/library/golang'
     args: ['go', 'build']
     dir: 'server/cli'
 
