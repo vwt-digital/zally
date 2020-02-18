@@ -15,7 +15,7 @@ steps:
 
   # Build the cloudbuilder-zally image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally', '.']
+    args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally', '-f', 'gcr.Dockerfile', '.']
     dir: 'server'
     
   # Push the image.

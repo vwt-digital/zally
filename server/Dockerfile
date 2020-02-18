@@ -1,18 +1,19 @@
-FROM openjdk:8-jdk-slim as builder
+#
+# Build the java application in a separate container.
+#
+FROM registry.opensource.zalan.do/stups/openjdk:latest as builder
 COPY . /src
 WORKDIR /src
-RUN ./gradlew build -x test
+RUN ./gradlew build --info
 
-FROM openjdk:8-jdk-slim as run
 
-COPY src/main/resources/api/zally-api.yaml /usr/local/bin/zalando-apis/zally-api.yaml
-COPY --from=builder /src/build/libs/zally.jar /usr/local/bin/zallyserver.jar
+FROM registry.opensource.zalan.do/stups/openjdk:latest
 
-CMD chmod +x cli/zally
-COPY cli/zally /usr/local/bin
+MAINTAINER "http://zalando.github.io/"
 
-COPY zally-lint.sh /
+COPY src/main/resources/api/zally-api.yaml /zalando-apis/zally-api.yaml
+COPY --from=builder /src/build/libs/zally.jar /
+
 EXPOSE 8080
-EXPOSE 8000
 
-ENTRYPOINT ["bash", "/zally-lint.sh"]
+CMD java $(java-dynamic-memory-opts) $(appdynamics-agent) -jar /zally.jar
