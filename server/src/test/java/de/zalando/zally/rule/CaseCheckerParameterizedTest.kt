@@ -1,6 +1,7 @@
 package de.zalando.zally.rule
 
-import de.zalando.zally.testConfig
+import de.zalando.zally.core.rulesConfig
+import de.zalando.zally.core.CaseChecker
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,7 +19,7 @@ class CaseCheckerParameterizedTest(private val param: TestParam) {
     }
 
     companion object {
-        val checker = CaseChecker.load(testConfig)
+        val checker = CaseChecker.load(rulesConfig)
 
         @Parameterized.Parameters(name = "{0}")
         @JvmStatic
@@ -55,6 +56,10 @@ class CaseCheckerParameterizedTest(private val param: TestParam) {
                 "Hyphenated-Pascal-Case",
                 listOf("Test-Case", "X-Flow-Id", "ETag", "Test-Case1234", "Test-Case-1234"),
                 listOf("test-Case", "TestCase", "testCase", "1234-Test-Case")
+            ) + parameters(
+                "Title Case",
+                listOf("Test Case", "TestCase", "Test-Case"),
+                listOf("test-Case")
             )
 
             val excess = parameters.map { it.case }.toSet() - checker.cases.keys

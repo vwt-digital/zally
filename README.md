@@ -64,11 +64,11 @@ look at our [contributing guidelines](CONTRIBUTING). Then check our
 
 For Zally [version 1.5](https://github.com/zalando/zally/milestone/3), we're focusing on:
 
-- Improve extansability of Zally
+- Improve extensibility of Zally
   - Plugin mechanism for Rules (Sets)
   - Utilities and helper functions for Check development
 - Improve quality by introducing a better testing approach for integration tests
-- Make the usage of Zally easier by roviding high-quality documentation for
+- Make the usage of Zally easier by providing high-quality documentation for
   - End users
   - Check developers
   - Operators and administrators
@@ -79,6 +79,15 @@ If you have ideas for these items, please let us know.
 
 Feel free to join our [Gitter room](https://gitter.im/zalando/zally) or contact one
 of the [maintainers](MAINTAINERS) directly.
+
+## Alternatives 
+
+Zally is not the only linter for OpenAPI v2 and v3. There is [an article](https://nordicapis.com/8-openapi-linters/) comparing different OpenAPI linters.
+
+So why should you choose Zally?
+- It supports [Zalando's RESTful Guidelines](http://zalando.github.io/restful-api-guidelines/)
+- It can be used in multiple ways: RESTful API, CLI and Web interface
+- Highly customizable (with Kotlin)  
 
 ## License
 

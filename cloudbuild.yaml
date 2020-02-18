@@ -1,0 +1,34 @@
+timeout: 1200s
+steps:
+  # Copy cli
+  - name: 'gcr.io/cloud-builders/gcloud-slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        cp -r cli/zally server/cli
+
+  # Build cli
+  - name: 'mirror.gcr.io/library/golang'
+    args: ['go', 'build']
+    dir: 'server/cli'
+
+  # Build the cloudbuilder-zally image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally', '.']
+    dir: 'server'
+    
+  # Push the image.
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally']
+
+  # Only keep the 10 most recent images
+  - name: 'gcr.io/cloud-builders/gcloud-slim'
+    entrypoint: 'bash'
+    args:
+    - '-c'
+    - |
+      set -eou pipefail
+      for digest in $(gcloud container images list-tags eu.gcr.io/$PROJECT_ID/cloudbuilder-zally --limit=99999 --sort-by=TIMESTAMP --format='get(digest)' | head -n-10); do
+        gcloud container images delete -q --force-delete-tags "eu.gcr.io/$PROJECT_ID/cloudbuilder-zally@digest"
+      done

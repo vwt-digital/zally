@@ -3,26 +3,36 @@ import { If } from './util.jsx';
 import { Msg } from './msg.jsx';
 import { RuleType } from './rules.jsx';
 import FluidContainer from './fluid-container.jsx';
+import { Link } from 'react-router-dom';
 
 export function Violations(props) {
   return (
     <div>
       <div className="dc-row">
         <div className="dc-column">
-          {props.violations.length ? <h3>VIOLATIONS</h3> : ''}
+          <h3>
+            VIOLATIONS
+            <span style={{ float: 'right' }}>
+              <Link to={'/editor/' + props.externalId} className="dc-link">
+                <i className="dc-icon dc-icon--interactive dc-icon--link" />
+              </Link>
+            </span>
+          </h3>
         </div>
       </div>
-      <FluidContainer>
-        <div className="dc-row">
-          <div className="dc-column">
-            <ul className="violations-content">
-              {props.violations.map((violation, index) => {
-                return <Violation key={index} violation={violation} />;
-              })}
-            </ul>
+      <div className="violations-container">
+        <FluidContainer>
+          <div className="dc-row">
+            <div className="dc-column">
+              <ul className="violations-content">
+                {props.violations.map((violation, index) => {
+                  return <Violation key={index} violation={violation} />;
+                })}
+              </ul>
+            </div>
           </div>
-        </div>
-      </FluidContainer>
+        </FluidContainer>
+      </div>
     </div>
   );
 }
@@ -134,6 +144,7 @@ export function ViolationsResult(props) {
         dataTestId="if-violations"
       >
         <Violations
+          externalId={props.externalId}
           violations={props.violations}
           violationsCount={props.violationsCount}
         />

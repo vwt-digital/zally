@@ -1,14 +1,18 @@
-FROM gradle:jdk10 as builder
+FROM openjdk:8-jdk-slim as builder
+COPY . /src
+WORKDIR /src
+RUN ./gradlew build -x test
 
-COPY --chown=gradle:gradle . /home/gradle/src
-WORKDIR /home/gradle/src
-RUN ./gradlew clean build 
+FROM openjdk:8-jdk-slim as run
 
-FROM registry.opensource.zalan.do/stups/openjdk:latest as run
+COPY src/main/resources/api/zally-api.yaml /usr/local/bin/zalando-apis/zally-api.yaml
+COPY --from=builder /src/build/libs/zally.jar /usr/local/bin/zallyserver.jar
 
-COPY src/main/resources/api/zally-api.yaml /zalando-apis/zally-api.yaml
-COPY --from=builder /home/gradle/src/build/libs/zally.jar /
+CMD chmod +x cli/zally
+COPY cli/zally /usr/local/bin
 
-EXPOSE $PORT
+COPY zally-lint.sh /
+EXPOSE 8080
+EXPOSE 8000
 
-CMD java $(java-dynamic-memory-opts) $(appdynamics-agent) -jar /zally.jar
+ENTRYPOINT ["bash", "/zally-lint.sh"]
