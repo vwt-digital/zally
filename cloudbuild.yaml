@@ -1,11 +1,16 @@
 timeout: 1200s
 steps:
   # Copy cli
-  - name: 'ubuntu'
-    args: ['cp', '-r', 'cli/zally', 'server/cli']
+  - name: 'gcr.io/cloud-builders/gcloud-slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        cp -r zally/ ../server/cli
+    dir: 'cli'
 
   # Build cli
-  - name: 'mirror.gcr.io/library/golang'
+  - name: 'gcr.io/gcp-runtimes/go1-builder'
     args: ['go', 'build']
     dir: 'server/cli'
 
