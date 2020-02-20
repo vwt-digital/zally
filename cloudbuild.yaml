@@ -39,7 +39,7 @@ steps:
     args:
       - '-c'
       - 'gcloud scheduler jobs delete --quiet ${REPO_NAME}-weekly-rebuild || exit 0'
-      
+
   # Create weekly rebuild scheduled job
   - name: 'gcr.io/cloud-builders/gcloud'
     args:

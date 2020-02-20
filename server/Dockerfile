@@ -1,15 +1,13 @@
 #
 # Build the java application in a separate container.
 #
-FROM registry.opensource.zalan.do/stups/openjdk:latest as builder
+FROM registry.opensource.zalan.do/stups/openjdk as builder
 COPY . /src
 WORKDIR /src
 RUN ./gradlew build --info
 
 
-FROM registry.opensource.zalan.do/stups/openjdk:latest
-
-MAINTAINER "http://zalando.github.io/"
+FROM registry.opensource.zalan.do/stups/openjdk
 
 COPY src/main/resources/api/zally-api.yaml /zalando-apis/zally-api.yaml
 COPY --from=builder /src/build/libs/zally.jar /
