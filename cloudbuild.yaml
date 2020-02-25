@@ -17,7 +17,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally', '-f', 'gcr.Dockerfile', '.']
     dir: 'server'
-    
+
   # Push the image.
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally']
@@ -26,12 +26,15 @@ steps:
   - name: 'gcr.io/cloud-builders/gcloud-slim'
     entrypoint: 'bash'
     args:
-    - '-c'
-    - |
-      set -eou pipefail
-      for digest in $(gcloud container images list-tags eu.gcr.io/$PROJECT_ID/cloudbuilder-zally --limit=99999 --sort-by=TIMESTAMP --format='get(digest)' | head -n-10); do
-        gcloud container images delete -q --force-delete-tags "eu.gcr.io/$PROJECT_ID/cloudbuilder-zally@digest"
-      done
+      - '-c'
+      - |
+        set -eou pipefail
+        for digest in $(gcloud container images list-tags \
+        eu.gcr.io/$PROJECT_ID/cloudbuilder-zally --limit=99999 \
+        --sort-by=TIMESTAMP --format='get(digest)' | head -n-10); do
+          gcloud container images delete -q --force-delete-tags \
+        "eu.gcr.io/$PROJECT_ID/cloudbuilder-zally@$${digest}"
+        done
 
   # Delete weekly rebuild scheduled job to allow recreation
   - name: 'gcr.io/cloud-builders/gcloud'
