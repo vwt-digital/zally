@@ -11,6 +11,8 @@ COPY --from=builder /src/build/libs/zally.jar /usr/local/bin/zallyserver.jar
 CMD chmod +x cli/zally
 COPY cli/zally /usr/local/bin
 
+RUN apt-get update && apt-get install -y netcat
+
 COPY zally-lint.sh /
 EXPOSE 8080
 EXPOSE 8000
