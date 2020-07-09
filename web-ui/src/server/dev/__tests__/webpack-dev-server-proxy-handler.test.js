@@ -14,7 +14,7 @@ describe('webpack-dev-server-proxy-handler', () => {
       publicPath: '/assets',
       protocol: 'http',
       host: 'localhost',
-      port: 8000,
+      port: 8080,
     });
   });
 

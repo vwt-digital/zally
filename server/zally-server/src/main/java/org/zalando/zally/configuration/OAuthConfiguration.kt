@@ -19,7 +19,7 @@ import org.zalando.stups.oauth2.spring.server.TokenInfoResourceServerTokenServic
 
 @Configuration
 @EnableResourceServer
-@Profile("production")
+@Profile("someprofile")
 @Import(SecurityProblemSupport::class)
 class OAuthConfiguration : ResourceServerConfigurerAdapter() {
 

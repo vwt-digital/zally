@@ -20,7 +20,7 @@ twintip:
   yaml: "classpath:/api/zally-api.yaml"
 
 server:
-  port: 8000 # using the same port as the web-ui expects (see `docker-compose.yaml`)
+  port: 8080 # using the same port as the web-ui expects (see `docker-compose.yaml`)
 
 zally:
   cli:

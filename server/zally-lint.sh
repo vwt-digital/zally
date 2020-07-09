@@ -23,7 +23,7 @@ if [[ "$1" =~ $regcheck ]]; then
     echo "server seems to have started. beginning linting process..."
 
     attempt_counter=0
-    port=8000
+    port=8080
 
     until lsof -i -P -n | grep ".*:${port}" >/dev/null; do
       if [ ${attempt_counter} -eq 5 ]; then
