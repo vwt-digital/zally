@@ -2,8 +2,8 @@
 
 set -eo pipefail
 
-if [ "$BRANCH_NAME" == "master" ]; then
-  echo "Skipping Zally in master branch."
+if [ "$BRANCH_NAME" != "develop" ]; then
+  echo "No branch name specified, or master branch. Specify BRANCH_NAME='develop' to run."
   exit 0
 fi
 
