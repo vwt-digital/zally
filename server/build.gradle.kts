@@ -1,76 +1,49 @@
-
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-buildscript {
-    repositories {
-        jcenter()
-        mavenCentral()
-        gradlePluginPortal()
-        maven("https://repo.spring.io/libs-release")
-    }
-
-    extra.apply {
-        // sets the jackson version that spring uses
-        set("jackson.version", "2.10.1")
-    }
-}
 
 plugins {
     val kotlinVersion = "1.3.21"
 
-    kotlin("jvm").version(kotlinVersion)
-    kotlin("kapt").version(kotlinVersion)
-    kotlin("plugin.jpa").version(kotlinVersion)
-    kotlin("plugin.noarg").version(kotlinVersion)
-    kotlin("plugin.spring").version(kotlinVersion)
-    kotlin("plugin.allopen").version(kotlinVersion)
+    // The buildscript is also kotlin, so we apply at the root level
+    kotlin("jvm") version kotlinVersion
+    kotlin("kapt") version kotlinVersion
 
-    id("jacoco")
-    id("org.springframework.boot") version "2.0.4.RELEASE"
-    id("io.spring.dependency-management") version "1.0.7.RELEASE"
+    // We need to declare these here since we are configuring them for
+    // subprojects from the top level.
+    jacoco
+    `maven-publish`
+    signing
     id("com.github.ben-manes.versions") version "0.20.0"
-    id("org.jlleitschuh.gradle.ktlint") version "7.2.1"
-    id("org.jetbrains.dokka") version "0.10.0"
-    id("maven-publish")
+    id("org.jetbrains.dokka") version "0.10.0" apply false
+
+    // We apply this so that ktlint can format the top level buildscript
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
+    id("org.jlleitschuh.gradle.ktlint-idea") version "9.2.1"
 }
 
 allprojects {
-
-    val group = "de.zalando"
-
-    val projVersion = when {
-        System.getenv("JITPACK") == "true" ->
-            System.getenv("VERSION")
-        else -> null
-    } ?: "1.0.0-dev"
-
-    apply(plugin = "java")
-    apply(plugin = "kotlin")
-    apply(plugin = "kotlin-kapt")
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "org.jetbrains.dokka")
-    apply(plugin = "maven-publish")
-
     repositories {
         jcenter()
         mavenCentral()
         maven("https://jitpack.io")
     }
+}
 
-    dependencies {
-        compile("org.jetbrains.kotlin:kotlin-stdlib")
-    }
+subprojects {
+
+    group = "org.zalando"
+
+    apply(plugin = "kotlin")
+    apply(plugin = "kotlin-kapt")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    apply(plugin = "com.github.ben-manes.versions")
+    apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "maven-publish")
+    apply(plugin = "jacoco")
+    apply(plugin = "signing")
 
     kapt {
         includeCompileClasspath = false
-    }
-
-    configurations.all {
-        resolutionStrategy {
-            // 1.2.10 disallows jar:file: resources, hopefully fixed in 1.2.14+
-            force("com.github.java-json-tools:json-schema-core:bf09fe87139ac1fde0755194b59130f3b2d63e3a")
-        }
     }
 
     tasks.withType(KotlinCompile::class.java).all {
@@ -105,21 +78,57 @@ allprojects {
     publishing {
         publications {
             create<MavenPublication>("mavenJava") {
-                groupId = group
-                artifactId = project.name
-                version = if (projVersion.endsWith("-dev")) projVersion.replace("-dev", "-SNAPSHOT") else projVersion
-
                 from(components["java"])
-                artifact(tasks["sourcesJar"])
-                artifact(tasks["javadocJar"])
+                pom {
+                    description.set("OpenAPI linter service")
+                    url.set("https://github.com/zalando/zally")
+                    name.set("OpenAPI linter")
+                    licenses {
+                        license {
+                            name.set("MIT License")
+                            url.set("https://opensource.org/licenses/MIT")
+                        }
+                    }
+                    developers {
+                        developer {
+                            name.set("Felix Müller")
+                            email.set("felix.mueller.berlin@googlemail.com")
+                        }
+                        developer {
+                            name.set("Mikhail Chernykh")
+                            email.set("netmisch@gmail.com")
+                        }
+                        developer {
+                            name.set("Maxim Tschumak")
+                            email.set("maxim.tschumak@gmail.com")
+                        }
+                        developer {
+                            name.set("Rui Araujo")
+                            email.set("rui.araujo@zalando.de")
+                        }
+                        developer {
+                            name.set("Tronje Krop")
+                            email.set("tronje.krop@zalando.de")
+                        }
+                        developer {
+                            name.set("Gregor Zeitlinger")
+                            email.set("gregor.zeitlinger@zalando.de")
+                        }
+                    }
+                    scm {
+                        connection.set("scm:git:git://github.com/zalando/zally.git")
+                        developerConnection.set("scm:git:ssh://github.com:zalando/zally.git")
+                        url.set("https://github.com/zalando/zally/tree/master")
+                    }
+                }
             }
         }
+
         repositories {
             maven {
                 val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
                 val snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-                val isSnapshot = projVersion.toString().endsWith("-SNAPSHOT")
-                url = uri(if (isSnapshot) snapshotsRepoUrl else releasesRepoUrl)
+                url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
                 credentials {
                     // defined in travis project settings or in $HOME/.gradle/gradle.properties
                     username = System.getenv("OSSRH_JIRA_USERNAME")
@@ -128,73 +137,50 @@ allprojects {
             }
         }
     }
-}
 
-dependencyManagement {
+    signing {
+        sign(publishing.publications["mavenJava"])
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            // 1.2.10 disallows jar:file: resources, hopefully fixed in 1.2.14+
+            force("com.github.java-json-tools:json-schema-core:bf09fe87139ac1fde0755194b59130f3b2d63e3a")
+        }
+    }
+
     dependencies {
-        dependency("org.assertj:assertj-core:3.11.0")
+        compile("org.jetbrains.kotlin:kotlin-stdlib")
+
+        // We define this here so all subprojects use the same version of jackson
+        compile("com.fasterxml.jackson.module:jackson-module-parameter-names:2.10.2")
+        compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.2")
+        compile("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.10.2")
+        compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.2")
+        compile("org.yaml:snakeyaml:1.24")
+
+        testCompile("com.jayway.jsonpath:json-path-assert:2.4.0")
+        testCompile("org.mockito:mockito-core:2.23.4")
     }
-}
 
-dependencies {
-    val springBootVersion = "2.0.4.RELEASE"
-    val jadlerVersion = "1.3.0"
-
-    compile(project(":zally-core"))
-    compile(project(":zally-ruleset-zalando"))
-    compile(project(":zally-ruleset-zally"))
-    compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
-    compile("org.springframework.boot:spring-boot-starter-undertow:$springBootVersion")
-    compile("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion")
-    compile("org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion") {
-        exclude("org.hibernate", "hibernate-entitymanager")
+    jacoco {
+        toolVersion = "0.8.2"
     }
-    compile("org.flywaydb:flyway-core:5.1.4")
-    compile("org.hsqldb:hsqldb:2.4.1")
-    compile("org.postgresql:postgresql:42.2.4")
-    compile("org.hibernate:hibernate-core:5.3.5.Final")
-    compile("org.jadira.usertype:usertype.core:7.0.0.CR1") {
-        exclude("org.hibernate", "hibernate-entitymanager")
+
+    tasks.check {
+        dependsOn(tasks.jacocoTestReport)
     }
-    compile("com.fasterxml.jackson.module:jackson-module-parameter-names:2.10.2")
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.2")
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.10.2")
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.2")
-    compile("org.yaml:snakeyaml:1.24")
-    compile("org.zalando.stups:stups-spring-oauth2-server:1.0.22")
-    compile("org.zalando:problem-spring-web:0.23.0")
-    compile("org.zalando:twintip-spring-web:1.1.0")
 
-    testCompile(project(":zally-test"))
-    testCompile("net.jadler:jadler-core:$jadlerVersion")
-    testCompile("net.jadler:jadler-jdk:$jadlerVersion")
-    testCompile("net.jadler:jadler-junit:$jadlerVersion")
-    testCompile("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
-    testCompile("com.jayway.jsonpath:json-path-assert:2.4.0")
-    testCompile("org.mockito:mockito-core:2.23.4")
-}
-
-jacoco {
-    toolVersion = "0.8.2"
-}
-
-tasks.bootRun {
-    jvmArgs = listOf("-Dspring.profiles.active=dev")
-}
-
-tasks.check {
-    dependsOn(tasks.jacocoTestReport)
-}
-
-tasks.jacocoTestReport {
-    reports {
-        xml.isEnabled = true
+    tasks.jacocoTestReport {
+        reports {
+            xml.isEnabled = true
+        }
     }
-}
 
-tasks.jar {
-    archiveBaseName.set(project.name)
-    archiveVersion.set(version)
+    tasks.jar {
+        archiveBaseName.set(project.name)
+        archiveVersion.set(version)
+    }
 }
 
 tasks.wrapper {

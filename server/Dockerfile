@@ -9,9 +9,9 @@ RUN ./gradlew build --info
 
 FROM registry.opensource.zalan.do/stups/openjdk:1.8.0-232-23
 
-COPY src/main/resources/api/zally-api.yaml /zalando-apis/zally-api.yaml
-COPY --from=builder /src/build/libs/zally.jar /
+COPY zally-server/src/main/resources/api/zally-api.yaml /zalando-apis/zally-api.yaml
+COPY --from=builder /src/zally-server/build/libs/zally-server.jar /
 
 EXPOSE 8080
 
-CMD java $(java-dynamic-memory-opts) $(appdynamics-agent) -jar /zally.jar
+CMD java $(java-dynamic-memory-opts) $(appdynamics-agent) -jar /zally-server.jar
