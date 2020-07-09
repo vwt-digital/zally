@@ -18,7 +18,7 @@ spring:
             non_contextual_creation: true
   oauth2:
     resource:
-      tokenInfoUri: ${TOKEN_INFO_URI}
+      tokenInfoUri: "https://info.services.auth.zalando.com/oauth2/tokeninfo"
 
 management:
   endpoints:
@@ -28,7 +28,7 @@ management:
       exposure:
         include: health, metrics
   server:
-    port: ${MANAGEMENT_PORT:7979}
+    port: 7979
 
 twintip:
   mapping: /api

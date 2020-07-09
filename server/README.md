@@ -1,4 +1,6 @@
 # Zally Server
+Frontend port: `8000`
+Tomcat server port: `8080` & `7979`
 
 This is Zally's heart - Zally Server. It implements all rule checks and offers an
 API to request an API linting. It also provides permalinks and statistics functionalities.
