@@ -21,7 +21,7 @@ func CreateApp() *cli.App {
 		cli.StringFlag{
 			Name:   "linter-service, l",
 			Usage:  "Linter service `URL`",
-			Value:  "http://localhost:8000",
+			Value:  "http://localhost:8080",
 			EnvVar: "ZALLY_URL",
 		},
 		cli.StringFlag{
