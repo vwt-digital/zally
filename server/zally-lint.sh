@@ -13,7 +13,11 @@ regcheck=".*yaml.*|.*json.*"
 
 if [[ "$1" =~ $regcheck ]]; then
 
-  java -jar /usr/local/bin/zallyserver.jar & sleep 45; zally lint "$1"; exit 0
+  java -jar /usr/local/bin/zallyserver.jar
+  echo "LSOF"
+  lsof -i -P -n
+  sleep 45
+  lsof -i -P -n
 
 #  echo "starting server..."
 #  regcheck=".*Started ApplicationKt.*"
