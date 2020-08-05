@@ -36,7 +36,7 @@ if [[ "$1" =~ $regcheck ]]; then
     done
 
     sleep 4; zally lint "$1"; exit 0
-  done < <(java -Xms512m -Xmx1024m -jar /usr/local/bin/zallyserver.jar)
+  done < <(java -Xms1024m -Xmx1536m -jar /usr/local/bin/zallyserver.jar)
 
   echo "server isn't starting correctly..."
   exit 1
