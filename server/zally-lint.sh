@@ -21,16 +21,16 @@ if [[ "$1" =~ $regcheck ]]; then
     [[ $line =~ $regcheck ]] || continue
     echo "server seems to have started. beginning linting process..."
 
-    attempt_counter=0
-    port=8080
+    attempt_counter=1
 
-    until lsof -i -P -n | grep ".*:${port}" >/dev/null; do
+    until jps | grep ApplicationKt >/dev/null; do
       if [ ${attempt_counter} -eq 5 ]; then
         echo "max attempts reached to connect with server. failing..."
         exit 1
       fi
+      printf "Attempt %s of 4" ${attempt_counter}
 
-      printf "port %s not in use, trying again...\n" "${port}"
+      printf "'ApplicationKt' not running, trying again...\n"
       attempt_counter=$((attempt_counter + 1))
       sleep 4
     done
