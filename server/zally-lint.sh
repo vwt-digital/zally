@@ -23,7 +23,7 @@ if [[ "$1" =~ $regcheck ]]; then
 
     attempt_counter=1
 
-    until jps | grep ApplicationKt >/dev/null; do
+    until jps | grep -v ApplicationKt >/dev/null; do
       if [ ${attempt_counter} -eq 5 ]; then
         echo "max attempts reached to connect with server. failing..."
         exit 1
