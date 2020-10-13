@@ -24,12 +24,12 @@ while IFS='' read -r line; do
   echo "'ApplicationKt' seems to have started, but we'll check if it is still running..."
 
   attempt_counter=1
-  while jps | grep -v ApplicationKt || ! lsof -i :8080; do
+  while jps | grep -v zallyserver.jar || ! lsof -i :8080; do
     if [ ${attempt_counter} -eq 6 ]; then
       echo "max attempts reached to connect with server. failing..."
       exit 1
     fi
-    printf "Attempt %s of 5" ${attempt_counter}
+    printf "Attempt %s of 5\n" ${attempt_counter}
 
     printf "'ApplicationKt' not running, trying again...\n"
     attempt_counter=$((attempt_counter + 1))
