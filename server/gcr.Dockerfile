@@ -11,7 +11,8 @@ COPY --from=builder /src/zally-server/build/libs/zally-server.jar /usr/local/bin
 CMD chmod +x cli/zally
 COPY cli/zally /usr/local/bin
 
-RUN apt-get update && apt-get install lsof
+RUN apt-get update && apt-get install lsof && apt-get install ufw -y
+RUN ufw allow 8000/tcp && ufw allow 8080/tcp
 
 COPY zally-lint.sh /
 EXPOSE 8080
