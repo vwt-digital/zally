@@ -3,44 +3,43 @@
 set -eo pipefail
 
 if [ "$BRANCH_NAME" != "develop" ]; then
-  echo "No branch name specified, or master branch. Specify BRANCH_NAME='develop' to run."
+  echo "Might be running on a production environment... Specify BRANCH_NAME='develop' to run."
   exit 0
 fi
 
-echo "checking argument..."
+check_file_type=".*yaml.*|.*json.*"
 
-regcheck=".*yaml.*|.*json.*"
-
-if [[ "$1" =~ $regcheck ]]; then
-  echo "starting server..."
-  regcheck=".*Started ApplicationKt.*"
-
-  while IFS='' read -r line; do
-
-    echo "$line"
-    [[ $line =~ $regcheck ]] || continue
-    echo "server seems to have started. beginning linting process..."
-
-    attempt_counter=0
-    port=8080
-
-    until lsof -i -P -n | grep ".*:${port}" >/dev/null; do
-      if [ ${attempt_counter} -eq 5 ]; then
-        echo "max attempts reached to connect with server. failing..."
-        exit 1
-      fi
-
-      printf "port %s not in use, trying again...\n" "${port}"
-      attempt_counter=$((attempt_counter + 1))
-      sleep 4
-    done
-
-    sleep 4; zally lint "$1"; exit 0
-  done < <(java -Xms1024m -Xmx1536m -jar /usr/local/bin/zallyserver.jar)
-
-  echo "server isn't starting correctly..."
+if ! [[ "$1" =~ $check_file_type ]]; then
+  echo "argument not optional: json or yaml spec file"
   exit 1
 fi
 
-echo "argument not optional: json or yaml spec file"
+check_started=".*Started ApplicationKt.*"
+
+while IFS='' read -r line; do
+
+  echo "$line"
+  [[ $line =~ $check_started ]] || continue
+
+  echo "'ApplicationKt' seems to have started, but we'll check if it is still running..."
+
+  attempt_counter=1
+  while ! jps | grep zallyserver.jar || ! lsof -i :8080; do
+    if [ ${attempt_counter} -eq 6 ]; then
+      echo "max attempts reached to connect with server. failing..."
+      exit 1
+    fi
+    printf "Attempt %s of 5\n" ${attempt_counter}
+
+    printf "'ApplicationKt' not running, trying again...\n"
+    attempt_counter=$((attempt_counter + 1))
+    sleep 4
+  done
+
+  sleep 4
+  zally lint "$1"
+  exit 0
+done < <(java -Xms1024m -Xmx1536m -jar /usr/local/bin/zallyserver.jar)
+
+echo "server isn't starting correctly..."
 exit 1
