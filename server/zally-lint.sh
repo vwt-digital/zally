@@ -39,7 +39,7 @@ while IFS='' read -r line; do
   sleep 4
   zally lint "$1"
   exit 0
-done < <(java -Xms1024m -Xmx1536m -jar /usr/local/bin/zallyserver.jar)
+done < <(java -Xms1024m -Xmx1536m -jar -Xmx1024m -Xmx1536m /usr/local/bin/zallyserver.jar)
 
 echo "server isn't starting correctly..."
 exit 1
