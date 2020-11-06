@@ -36,8 +36,7 @@ steps:
     entrypoint: gcloud
     args: ['run', 'deploy', 'zally-server', '--image',
            'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server:latest', '--region',
-           'europe-west1', '--platform', 'managed', '--allow-unauthenticated',
-           '--memory', '3Gi']
+           'europe-west1', '--platform', 'managed', '--memory', '3Gi']
 
   # Build cli
   - name: 'mirror.gcr.io/library/golang'

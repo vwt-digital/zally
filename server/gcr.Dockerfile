@@ -1,3 +1,4 @@
+FROM scratch
 WORKDIR /src
 
 CMD chmod +x cli/zally
