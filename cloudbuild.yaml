@@ -42,7 +42,7 @@ steps:
   # Build cli
   - name: 'mirror.gcr.io/library/golang'
     args: ['go', 'build']
-    dir: 'cli/zally '
+    dir: 'cli/zally'
 
   # Build the cloudbuilder-zally image
   - name: 'gcr.io/cloud-builders/docker'
