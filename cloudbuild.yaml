@@ -1,43 +1,42 @@
 timeout: 1200s
 steps:
-  # Build the cloudbuilder-zally image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server', '-f', 'server.Dockerfile', '.']
-    dir: 'server'
-
-  # Push the image.
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server']
-
-  # Delete weekly rebuild scheduled job to allow recreation
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - 'gcloud scheduler jobs delete --quiet ${REPO_NAME}-weekly-rebuild || exit 0'
-
-  # Create weekly rebuild scheduled job
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      - 'scheduler'
-      - 'jobs'
-      - 'create'
-      - 'http'
-      - '${REPO_NAME}-weekly-rebuild'
-      - '--schedule=0 7 * * 4'
-      - '--uri=https://cloudbuild.googleapis.com/v1/projects/${PROJECT_ID}/triggers/Push-to-${REPO_NAME}-${BRANCH_NAME}-branch:run'
-      - '--http-method=POST'
-      - '--message-body={"branchName": "${BRANCH_NAME}"}'
-      - '--oauth-service-account-email=${PROJECT_ID}@appspot.gserviceaccount.com'
-      - '--oauth-token-scope=https://www.googleapis.com/auth/cloud-platform'
+#  # Build the cloudbuilder-zally image
+#  - name: 'gcr.io/cloud-builders/docker'
+#    args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server', '-f', 'server.Dockerfile', '.']
+#    dir: 'server'
+#
+#  # Push the image.
+#  - name: 'gcr.io/cloud-builders/docker'
+#    args: ['push', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server']
+#
+#  # Delete weekly rebuild scheduled job to allow recreation
+#  - name: 'gcr.io/cloud-builders/gcloud'
+#    entrypoint: 'bash'
+#    args:
+#      - '-c'
+#      - 'gcloud scheduler jobs delete --quiet ${REPO_NAME}-weekly-rebuild || exit 0'
+#
+#  # Create weekly rebuild scheduled job
+#  - name: 'gcr.io/cloud-builders/gcloud'
+#    args:
+#      - 'scheduler'
+#      - 'jobs'
+#      - 'create'
+#      - 'http'
+#      - '${REPO_NAME}-weekly-rebuild'
+#      - '--schedule=0 7 * * 4'
+#      - '--uri=https://cloudbuild.googleapis.com/v1/projects/${PROJECT_ID}/triggers/Push-to-${REPO_NAME}-${BRANCH_NAME}-branch:run'
+#      - '--http-method=POST'
+#      - '--message-body={"branchName": "${BRANCH_NAME}"}'
+#      - '--oauth-service-account-email=${PROJECT_ID}@appspot.gserviceaccount.com'
+#      - '--oauth-token-scope=https://www.googleapis.com/auth/cloud-platform'
 
   # Cloud run deploy
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: ['run', 'deploy', 'zally-server', '--image',
            'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server:latest', '--region',
-           'REGION', '--platform', 'managed', '--allow-unauthenticated']
-
+           'europe-west1', '--platform', 'managed', '--allow-unauthenticated']
 
   # Build cli
   - name: 'mirror.gcr.io/library/golang'
