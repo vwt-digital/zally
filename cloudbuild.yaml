@@ -15,7 +15,7 @@ steps:
 
   # Build the cloudbuilder-zally image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally', '-f', 'gcr.Dockerfile', '.']
+    args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally', '.']
     dir: 'server'
 
   # Push the image.
@@ -35,6 +35,17 @@ steps:
           gcloud container images delete -q --force-delete-tags \
         "eu.gcr.io/$PROJECT_ID/cloudbuilder-zally@$${digest}"
         done
+
+  # Deploy to cloud run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - 'gcloud run deploy cloudbuilder-zally \
+                  --image eu.gcr.io/$PROJECT_ID/cloudbuilder-zally:latest \
+                  --platform managed \
+                  --region europe-west1 \
+                  --allow-unauthenticated'
 
   # Delete weekly rebuild scheduled job to allow recreation
   - name: 'gcr.io/cloud-builders/gcloud'

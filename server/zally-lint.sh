@@ -2,13 +2,6 @@
 
 set -eo pipefail
 
-memory_rain=$(cat /sys/fs/cgroup/memory/memory.limit_in_bytes)
-
-if [ "$memory_rain" -lt 536000000 ]; then
-  echo "Zally won't always run correctly with a memory limit of $memory_rain bytes. Try higher (>512mb/536870912)."
-  exit 1
-fi
-
 if [ "$BRANCH_NAME" != "develop" ]; then
   echo "Might be running on a production environment... Specify BRANCH_NAME='develop' to run."
   exit 0
