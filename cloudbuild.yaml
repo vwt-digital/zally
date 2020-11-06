@@ -1,51 +1,13 @@
 timeout: 1200s
 steps:
-  # Copy cli
-  - name: 'gcr.io/cloud-builders/gcloud-slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        cp -r cli/zally server/cli
-
-  # Build cli
-  - name: 'mirror.gcr.io/library/golang'
-    args: ['go', 'build']
-    dir: 'server/cli'
-
   # Build the cloudbuilder-zally image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally', '.']
+    args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server', '-f', 'server.Dockerfile', '.']
     dir: 'server'
 
   # Push the image.
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally']
-
-  # Only keep the 10 most recent images
-  - name: 'gcr.io/cloud-builders/gcloud-slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -eou pipefail
-        for digest in $(gcloud container images list-tags \
-        eu.gcr.io/$PROJECT_ID/cloudbuilder-zally --limit=99999 \
-        --sort-by=TIMESTAMP --format='get(digest)' | head -n-10); do
-          gcloud container images delete -q --force-delete-tags \
-        "eu.gcr.io/$PROJECT_ID/cloudbuilder-zally@$${digest}"
-        done
-
-  # Deploy to cloud run
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - 'gcloud run deploy cloudbuilder-zally \
-                  --image eu.gcr.io/$PROJECT_ID/cloudbuilder-zally:latest \
-                  --platform managed \
-                  --region europe-west1 \
-                  --allow-unauthenticated'
+    args: ['push', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server']
 
   # Delete weekly rebuild scheduled job to allow recreation
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -68,3 +30,48 @@ steps:
       - '--message-body={"branchName": "${BRANCH_NAME}"}'
       - '--oauth-service-account-email=${PROJECT_ID}@appspot.gserviceaccount.com'
       - '--oauth-token-scope=https://www.googleapis.com/auth/cloud-platform'
+
+  # Deploy to cloud run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - 'gcloud run deploy zally-server \
+                  --image eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server:latest \
+                  --platform managed \
+                  --region europe-west1 \
+                  --allow-unauthenticated'
+
+  # Build cli
+  - name: 'mirror.gcr.io/library/golang'
+    args: ['go', 'build']
+    dir: 'cli/zally '
+
+  # Build the cloudbuilder-zally image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally', '-f', 'gcr.Dockerfile', '.']
+    dir: 'server'
+
+  # Push the image.
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally']
+
+  # Only keep the 10 most recent images
+  - name: 'gcr.io/cloud-builders/gcloud-slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -eou pipefail
+        for digest in $(gcloud container images list-tags \
+        eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server --limit=99999 \
+        --sort-by=TIMESTAMP --format='get(digest)' | head -n-10); do
+          gcloud container images delete -q --force-delete-tags \
+        "eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server@$${digest}"
+        done
+        for digest in $(gcloud container images list-tags \
+        eu.gcr.io/$PROJECT_ID/cloudbuilder-zally --limit=99999 \
+        --sort-by=TIMESTAMP --format='get(digest)' | head -n-10); do
+          gcloud container images delete -q --force-delete-tags \
+        "eu.gcr.io/$PROJECT_ID/cloudbuilder-zally@$${digest}"
+        done

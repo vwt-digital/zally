@@ -1,21 +1,6 @@
-FROM openjdk:8-jdk-slim as builder
-COPY . /src
 WORKDIR /src
-RUN ./gradlew build -x test
-
-FROM openjdk:8-jdk-slim as run
-
-COPY zally-server/src/main/resources/api/zally-api.yaml /usr/local/bin/zalando-apis/zally-api.yaml
-COPY --from=builder /src/zally-server/build/libs/zally-server.jar /usr/local/bin/zallyserver.jar
 
 CMD chmod +x cli/zally
 COPY cli/zally /usr/local/bin
-
-RUN apt-get update && apt-get install lsof && apt-get install ufw -y
-RUN ufw allow 8000/tcp && ufw allow 8080/tcp
-
-COPY zally-lint.sh /
-EXPOSE 8080
-EXPOSE 8000
 
 ENTRYPOINT ["bash", "/zally-lint.sh"]
