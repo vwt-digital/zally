@@ -31,16 +31,13 @@ steps:
       - '--oauth-service-account-email=${PROJECT_ID}@appspot.gserviceaccount.com'
       - '--oauth-token-scope=https://www.googleapis.com/auth/cloud-platform'
 
-  # Deploy to cloud run
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - 'gcloud run deploy zally-server \
-                  --image eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server:latest \
-                  --platform managed \
-                  --region europe-west1 \
-                  --allow-unauthenticated'
+  # Cloud run deploy
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'zally-server', '--image',
+           'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server:latest', '--region',
+           'REGION', '--platform', 'managed', '--allow-unauthenticated']
+
 
   # Build cli
   - name: 'mirror.gcr.io/library/golang'
