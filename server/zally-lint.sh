@@ -14,4 +14,4 @@ if ! [[ "$1" =~ $check_file_type ]]; then
   exit 1
 fi
 
-zally -l https://zally-server-ysstuopb4a-ew.a.run.app lint "$1"
+zally -l https://zally-server-ysstuopb4a-ew.a.run.app/api-violations lint "$1"
