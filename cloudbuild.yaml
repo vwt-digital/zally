@@ -38,6 +38,11 @@ steps:
            'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server:latest', '--region',
            'europe-west1', '--platform', 'managed', '--memory', '3Gi']
 
+  # Build cli
+  - name: 'mirror.gcr.io/library/golang'
+    args: ['go', 'build']
+    dir: 'cli/zally'
+
   # Copy cli
   - name: 'gcr.io/cloud-builders/gcloud-slim'
     entrypoint: 'bash'
@@ -45,11 +50,7 @@ steps:
       - '-c'
       - |
         cp -r cli/zally server/cli
-
-  # Build cli
-  - name: 'mirror.gcr.io/library/golang'
-    args: ['go', 'build']
-    dir: 'server/cli'
+        chmod +x server/cli/zally
 
   # Build the cloudbuilder-zally image
   - name: 'gcr.io/cloud-builders/docker'

@@ -1,6 +1,6 @@
-FROM scratch
+FROM ubuntu
 
-CMD chmod +x cli/zally
 COPY cli/zally /usr/local/bin
+COPY zally-lint.sh /usr/local/bin
 
-ENTRYPOINT ["./zally", "-l", "https://zally-server-ysstuopb4a-ew.a.run.app", "lint"]
+ENTRYPOINT ["bash", "/usr/local/bin/zally-lint.sh"]
