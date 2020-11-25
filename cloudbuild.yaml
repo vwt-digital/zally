@@ -33,10 +33,16 @@ steps:
 
   # Cloud run deploy
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: gcloud
-    args: ['run', 'deploy', 'zally-server', '--image',
-           'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server:latest', '--region',
-           'europe-west1', '--platform', 'managed', '--memory', '3Gi']
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        gcloud run deploy zally-server \
+        --image eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server:latest \
+        --region europe-west1 \
+        --platform managed \
+        --memory 3Gi | grep 'Service URL:' | sed 's/^.*: //' >> output #> /dev/null
+    dir: 'server'
 
   # Only keep the 3 most recent revisions
   - name: 'gcr.io/cloud-builders/gcloud'
