@@ -38,6 +38,20 @@ steps:
            'eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server:latest', '--region',
            'europe-west1', '--platform', 'managed', '--memory', '3Gi']
 
+  # Only keep the 3 most recent revisions
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -eou pipefail
+        for digest in $(gcloud run revisions list \
+        --service zally-server --platform=managed --region=europe-west1 \
+        --format='get(REVISION)' | tail -n+4); do
+          gcloud run revisions delete $${digest} -q \
+        --platform=managed --region=europe-west1
+        done
+
   # Build cli
   - name: 'mirror.gcr.io/library/golang'
     args: ['go', 'build']

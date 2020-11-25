@@ -14,4 +14,5 @@ if ! [[ "$1" =~ $check_file_type ]]; then
   exit 1
 fi
 
+echo "The process of starting the server can take up to 90 seconds..."
 zally -l https://zally-server-ysstuopb4a-ew.a.run.app lint "$1"
