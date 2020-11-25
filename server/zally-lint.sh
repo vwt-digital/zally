@@ -16,5 +16,6 @@ fi
 
 loc=$(</home/output)
 
+echo "Server: $loc"
 echo "The process of starting the server can take up to 90 seconds..."
 zally -l "$loc" lint "$1"

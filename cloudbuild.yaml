@@ -41,7 +41,9 @@ steps:
         --image eu.gcr.io/$PROJECT_ID/cloudbuilder-zally-server:latest \
         --region europe-west1 \
         --platform managed \
-        --memory 3Gi | grep 'Service URL:' | sed 's/^.*: //' >> output #> /dev/null
+        --memory 3Gi
+        (gcloud run services list --platform managed \
+        --region=europe-west1 --format='get(URL)' | head -n 1)>output
     dir: 'server'
 
   # Only keep the 3 most recent revisions
