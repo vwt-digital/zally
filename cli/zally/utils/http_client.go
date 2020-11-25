@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const httpTimeout = 12 * time.Second
+const httpTimeout = 90 * time.Second
 
 // DoHTTPRequest makes an HTTP request with timeout
 func DoHTTPRequest(request *http.Request) (*http.Response, error) {
