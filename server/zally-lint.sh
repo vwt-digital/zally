@@ -14,7 +14,7 @@ if ! [[ "$1" =~ $check_file_type ]]; then
   exit 1
 fi
 
-loc=$(<output)
+loc=$(</home/output)
 
 echo "The process of starting the server can take up to 90 seconds..."
 zally -l "$loc" lint "$1"
