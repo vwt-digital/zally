@@ -61,7 +61,7 @@ steps:
         done
 
   # Build cli
-  - name: 'mirror.gcr.io/library/golang'
+  - name: 'golang'
     args: ['go', 'build']
     dir: 'cli/zally'
 
